@@ -9,11 +9,11 @@ app.use(express.json());
 
 // Routes
 app.get('/', (req, res) => {
-  res.send('Hello world');
+  res.send('Hello world. Branch main');
 });
 
 app.get('/test', (req, res) => {
-  res.send('Hello world');
+  res.send('Hello world. Branch main');
 });
 
 // Start server
