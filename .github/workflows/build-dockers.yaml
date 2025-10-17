@@ -1,0 +1,108 @@
+name: Build and Deploy Dockers
+
+on:
+  push:
+    branches: [ main, dev-* ]
+    paths:
+      # run on test-app changes
+      - 'test-app/**'
+      - '.github/workflows/build-dockers.yaml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'typescript/**'
+      - '.github/workflows/build-dockers.yaml'
+  workflow_dispatch:
+    inputs:
+      application:
+        description: 'Application to deploy (leave empty for all)'
+        required: false
+        type: choice
+        default: test-app
+        options:
+          - test-app
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-dockers-to-registry:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        app:
+
+          # List repository apps to build a docker images here
+          # This is Test App
+          - name: test-app
+            path: test-app
+            dockerfile: Dockerfile
+            context: test-app
+          # Add more applications here as needed
+          # - name: another-app
+          #   path: typescript/another-app
+          #   dockerfile: Dockerfile
+          #   context: typescript/another-app
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Filter matrix for manual dispatch
+        if: github.event.inputs.application != ''
+        run: |
+          if [ "${{ matrix.app.name }}" != "${{ github.event.inputs.application }}" ]; then
+            echo "Skipping ${{ matrix.app.name }} - not requested"
+            exit 0
+          fi
+          echo "Building requested application: ${{ matrix.app.name }}"
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}/${{ matrix.app.name }}
+          tags: |
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=sha,prefix={{branch}}-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ${{ matrix.app.context }}
+          file: ${{ matrix.app.path }}/${{ matrix.app.dockerfile }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+
+      - name: Output image info
+        if: github.event_name != 'pull_request'
+        run: |
+          echo "Built and pushed image: ${{ steps.meta.outputs.tags }}"
+          echo "Application: ${{ github.event.inputs.application != '' && env.APP_NAME || matrix.app.name }}"
+          echo "Registry: ${{ env.REGISTRY }}"

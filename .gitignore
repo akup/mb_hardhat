@@ -1,0 +1,64 @@
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Dependency directories
+jspm_packages/
+
+# TypeScript
+*.tsbuildinfo
+dist/
+build/
+out/
+*.js.map
+
+# Compiled output
+*.d.ts.map
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# OS files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# VSCode
+.vscode/
+*.code-workspace
+.history/
+
+# IDEs
+.idea/
+*.iml
+*.sublime-project
+*.sublime-workspace
+
+# Logs
+logs/
+*.log
+
+# Testing
+coverage/
+.nyc_output/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Package manager locks (if you want to ignore them)
+# package-lock.json
+# pnpm-lock.yaml
+# yarn.lock
+
