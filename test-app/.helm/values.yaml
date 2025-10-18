@@ -1,7 +1,7 @@
-nameOverride: "test-app"
+nameOverride: "hh-app"
 
 podLabels:
-  app: test-app
+  app: hh-app
   tier: backend
 
 replicaCount: 1
@@ -70,9 +70,9 @@ ingress:
     nginx.ingress.kubernetes.io/force-reload: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/enable-cors: "true"
-    nginx.ingress.kubernetes.io/cors-allow-origin: "https://dev.mc-ops.tech"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "https://mb-test.kuprin.su"
   hosts:
-    - host: dev.mc-ops.tech
+    - host: mb-test.kuprin.su
       paths:
         - path: /
           pathType: Prefix
