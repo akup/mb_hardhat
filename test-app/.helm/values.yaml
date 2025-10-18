@@ -14,7 +14,7 @@ updateStrategy:
     maxSurge: 1
 
 image:
-  repository: "ghcr.io/OpenDOps/mb_hardhat/test-app"
+  repository: "ghcr.io/opendops/mb_hardhat/test-app"
   pullPolicy: Always
 
 global:
