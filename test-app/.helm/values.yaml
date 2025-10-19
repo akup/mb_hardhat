@@ -15,6 +15,7 @@ updateStrategy:
 
 image:
   repository: "ghcr.io/opendops/mb_hardhat/test-app"
+  tag: "feature-123"
   pullPolicy: Always
 
 imagePullSecrets:
