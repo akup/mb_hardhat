@@ -17,6 +17,9 @@ image:
   repository: "ghcr.io/opendops/mb_hardhat/test-app"
   pullPolicy: Always
 
+imagePullSecrets:
+  - name: "opendops-docker-registry"
+
 global:
   alwaysRedeploy: true
   terminationGracePeriodSeconds: 30
