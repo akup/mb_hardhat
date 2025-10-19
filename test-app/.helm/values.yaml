@@ -1,4 +1,4 @@
-nameOverride: "hh-app"
+nameOverride: "hh-app-feature123"
 
 podLabels:
   app: hh-app
